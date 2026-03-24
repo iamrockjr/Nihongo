@@ -1264,7 +1264,149 @@ header {
   border-radius:99px; transition:width 0.3s;
 }
 
-/* ── EXERCISES TAB ── */
+/* ── KANA ZOOM MODAL ── */
+.kana-modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(26,20,16,0.65);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.kana-modal-overlay.open {
+  opacity: 1; pointer-events: auto;
+}
+.kana-modal {
+  background: linear-gradient(160deg, var(--washi) 0%, #fff 100%);
+  border-radius: 24px;
+  box-shadow: 0 32px 80px rgba(26,20,16,0.35);
+  border: 1px solid rgba(184,146,42,0.2);
+  padding: 2.5rem 2rem 2rem;
+  width: min(400px, 90vw);
+  position: relative;
+  transform: scale(0.92) translateY(12px);
+  transition: transform 0.28s cubic-bezier(0.34,1.4,0.64,1);
+  text-align: center;
+  overflow: hidden;
+}
+.kana-modal-overlay.open .kana-modal {
+  transform: scale(1) translateY(0);
+}
+/* Washi paper texture bg */
+.kana-modal::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 30 Q15 28 30 30 Q45 32 60 30' stroke='%23c9a84c' stroke-width='0.3' fill='none' opacity='0.12'/%3E%3C/svg%3E");
+  pointer-events: none; border-radius: 24px;
+}
+.kana-modal-close {
+  position: absolute; top: 0.9rem; right: 0.9rem;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(26,20,16,0.07); border: none;
+  color: #888; font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.kana-modal-close:hover { background: rgba(26,20,16,0.14); color: var(--sumi); }
+.kana-modal-counter {
+  font-size: 0.62rem; letter-spacing: 0.5em; color: #bbb;
+  text-transform: uppercase; font-family: 'Noto Serif JP', serif;
+  margin-bottom: 1rem;
+}
+.kana-modal-char {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 9rem; font-weight: 800;
+  color: var(--sumi); line-height: 1;
+  display: block;
+  margin: 0 auto 0.4rem;
+  text-shadow: 4px 6px 0 rgba(26,20,16,0.06);
+  transition: opacity 0.15s, transform 0.15s;
+  position: relative; z-index: 1;
+  /* Faint grid guidelines */
+  background: 
+    linear-gradient(var(--washi3) 1px, transparent 1px),
+    linear-gradient(90deg, var(--washi3) 1px, transparent 1px);
+  background-size: 50% 50%;
+  background-position: center center;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.kana-modal-char.animating { opacity: 0; transform: scale(0.85); }
+.kana-modal-rom {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.4rem; color: var(--gold);
+  letter-spacing: 0.15em; margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+.kana-modal-hint {
+  font-size: 0.78rem; color: #999; margin-bottom: 1.5rem;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+.kana-modal-badges {
+  display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+}
+.kana-modal-badge {
+  padding: 0.25rem 0.8rem; border-radius: 20px;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; font-family: 'Noto Sans JP', sans-serif;
+}
+.badge-row { background: rgba(184,146,42,0.1); color: var(--gold); }
+.badge-learned { background: rgba(46,125,110,0.12); color: var(--teal); }
+.badge-unlearned { background: rgba(26,20,16,0.06); color: #aaa; }
+.kana-modal-actions {
+  display: flex; gap: 0.7rem; justify-content: center; margin-bottom: 1.2rem;
+}
+.kana-modal-learn-btn {
+  padding: 0.6rem 1.6rem; border: none; border-radius: 50px;
+  font-family: 'Noto Sans JP', sans-serif; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: all 0.18s;
+}
+.kana-modal-learn-btn.mark-learned {
+  background: linear-gradient(135deg, var(--teal), #1a5a4e);
+  color: white; box-shadow: 0 4px 14px rgba(46,125,110,0.3);
+}
+.kana-modal-learn-btn.mark-learned:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(46,125,110,0.4); }
+.kana-modal-learn-btn.mark-unlearned {
+  background: rgba(26,20,16,0.07); color: #777;
+  border: 1px solid rgba(26,20,16,0.12);
+}
+.kana-modal-learn-btn.mark-unlearned:hover { background: rgba(192,57,43,0.08); color: var(--red-jp); border-color: var(--red-jp); }
+.kana-modal-nav {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+}
+.kana-nav-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid rgba(26,20,16,0.12); background: white;
+  color: var(--sumi); font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s; box-shadow: 0 2px 8px rgba(26,20,16,0.07);
+  flex-shrink: 0;
+}
+.kana-nav-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); background: var(--gold-pale); }
+.kana-nav-btn:disabled { opacity: 0.25; cursor: default; }
+.kana-nav-dots {
+  display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; flex: 1;
+}
+.kana-nav-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(26,20,16,0.1); cursor: pointer; transition: all 0.15s;
+  border: none; padding: 0;
+}
+.kana-nav-dot.active { background: var(--red-jp); transform: scale(1.3); }
+.kana-nav-dot.done { background: var(--teal); }
+
+/* Zoom trigger on kana card */
+.kana-zoom-btn {
+  position: absolute; bottom: 4px; right: 5px;
+  width: 18px; height: 18px; border-radius: 5px;
+  background: rgba(184,146,42,0.15); border: none;
+  color: var(--gold); font-size: 0.6rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.15s;
+  z-index: 2; line-height: 1;
+}
+.kana-card:hover .kana-zoom-btn { opacity: 1; }
 .ex-type-selector {
   display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap;
 }
@@ -1685,6 +1827,26 @@ footer {
 </style>
 </head>
 <body>
+
+<!-- Kana zoom modal -->
+<div class="kana-modal-overlay" id="kana-modal-overlay" onclick="closeKanaModal(event)">
+  <div class="kana-modal">
+    <button class="kana-modal-close" onclick="closeKanaModal(null)">✕</button>
+    <div class="kana-modal-counter" id="kana-modal-counter">1 / 25</div>
+    <span class="kana-modal-char" id="kana-modal-char">あ</span>
+    <div class="kana-modal-rom" id="kana-modal-rom">a</div>
+    <div class="kana-modal-hint" id="kana-modal-hint">Vokal-Reihe</div>
+    <div class="kana-modal-badges" id="kana-modal-badges"></div>
+    <div class="kana-modal-actions">
+      <button class="kana-modal-learn-btn" id="kana-modal-learn-btn" onclick="kanaModalToggleLearn()">✓ Als gelernt markieren</button>
+    </div>
+    <div class="kana-modal-nav">
+      <button class="kana-nav-btn" id="kana-nav-prev" onclick="kanaModalNav(-1)">←</button>
+      <div class="kana-nav-dots" id="kana-nav-dots"></div>
+      <button class="kana-nav-btn" id="kana-nav-next" onclick="kanaModalNav(1)">→</button>
+    </div>
+  </div>
+</div>
 
 <!-- Moon decorations -->
 <div class="moon-deco"></div>
@@ -2697,17 +2859,21 @@ function buildKanaTab(w) {
   const learned = w.hiragana.filter(k => k.c.trim() && state.learnedKana.includes(k.c)).length;
   const total = w.hiragana.filter(k => k.c.trim()).length;
   const pct = total ? Math.round(learned/total*100) : 0;
+
+  // Store kana list for modal navigation
+  kanaModal.list = w.hiragana.filter(k => k.c.trim());
+
   return `
     <div class="kana-intro">
-      Klicke auf ein Zeichen um es als <strong>gelernt</strong> zu markieren (grün = gelernt).
-      Lerne die Zeichen Reihe für Reihe: Vokal-Reihe (a-i-u-e-o), dann ka-ki-ku-ke-ko usw.
+      Klicke auf ein Zeichen zum <strong>Vergrößern</strong> · <kbd style="font-size:0.7rem;padding:0.1rem 0.4rem;border:1px solid #ccc;border-radius:4px;">→</kbd> / <kbd style="font-size:0.7rem;padding:0.1rem 0.4rem;border:1px solid #ccc;border-radius:4px;">←</kbd> zum Navigieren · Grün = gelernt
     </div>
     <div class="hiragana-grid">
-      ${w.hiragana.map(k => k.c.trim() ? `
+      ${w.hiragana.map((k, i) => k.c.trim() ? `
         <div class="kana-card ${state.learnedKana.includes(k.c) ? 'learned' : ''}"
-             onclick="toggleKana('${k.c}', this)">
+             onclick="openKanaModal(${kanaModal.list.findIndex(x=>x.c===k.c)})">
           <span class="kana-char">${k.c}</span>
           <div class="kana-rom">${k.r}</div>
+          <button class="kana-zoom-btn" onclick="event.stopPropagation();openKanaModal(${kanaModal.list.findIndex(x=>x.c===k.c)})" title="Vergrößern">⤢</button>
         </div>` : '<div class="kana-card" style="opacity:0;pointer-events:none;"></div>'
       ).join('')}
     </div>
@@ -2718,6 +2884,125 @@ function buildKanaTab(w) {
       </div>
       <span>${pct}%</span>
     </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  KANA ZOOM MODAL
+// ═══════════════════════════════════════════
+const kanaModal = { list: [], idx: 0 };
+
+// Row labels for hint display
+const KANA_ROW_HINTS = {
+  'a':'Vokal-Reihe','i':'Vokal-Reihe','u':'Vokal-Reihe','e':'Vokal-Reihe','o':'Vokal-Reihe',
+  'ka':'K-Reihe','ki':'K-Reihe','ku':'K-Reihe','ke':'K-Reihe','ko':'K-Reihe',
+  'sa':'S-Reihe','shi':'S-Reihe','su':'S-Reihe','se':'S-Reihe','so':'S-Reihe',
+  'ta':'T-Reihe','chi':'T-Reihe','tsu':'T-Reihe','te':'T-Reihe','to':'T-Reihe',
+  'na':'N-Reihe','ni':'N-Reihe','nu':'N-Reihe','ne':'N-Reihe','no':'N-Reihe',
+  'ha':'H-Reihe','hi':'H-Reihe','fu':'H-Reihe','he':'H-Reihe','ho':'H-Reihe',
+  'ma':'M-Reihe','mi':'M-Reihe','mu':'M-Reihe','me':'M-Reihe','mo':'M-Reihe',
+  'ya':'Y-Reihe','yu':'Y-Reihe','yo':'Y-Reihe',
+  'ra':'R-Reihe','ri':'R-Reihe','ru':'R-Reihe','re':'R-Reihe','ro':'R-Reihe',
+  'wa':'W-Reihe','wi':'W-Reihe','we':'W-Reihe','wo':'W-Reihe',
+  'n':'Einzelzeichen',
+};
+
+function openKanaModal(idx) {
+  kanaModal.idx = idx;
+  renderKanaModal();
+  document.getElementById('kana-modal-overlay').classList.add('open');
+  document.addEventListener('keydown', kanaModalKeyHandler);
+}
+
+function closeKanaModal(e) {
+  if(e && e.target !== document.getElementById('kana-modal-overlay')) return;
+  document.getElementById('kana-modal-overlay').classList.remove('open');
+  document.removeEventListener('keydown', kanaModalKeyHandler);
+}
+
+function kanaModalKeyHandler(e) {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') kanaModalNav(1);
+  else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') kanaModalNav(-1);
+  else if(e.key === 'Escape') closeKanaModal(null);
+  else if(e.key === ' ' || e.key === 'Enter') { e.preventDefault(); kanaModalToggleLearn(); }
+}
+
+function kanaModalNav(dir) {
+  const next = kanaModal.idx + dir;
+  if(next < 0 || next >= kanaModal.list.length) return;
+  // Animate char out
+  const charEl = document.getElementById('kana-modal-char');
+  charEl.classList.add('animating');
+  setTimeout(() => {
+    kanaModal.idx = next;
+    renderKanaModal();
+    charEl.classList.remove('animating');
+  }, 130);
+}
+
+function kanaModalToggleLearn() {
+  const k = kanaModal.list[kanaModal.idx];
+  if(!k) return;
+  const idx = state.learnedKana.indexOf(k.c);
+  if(idx === -1) state.learnedKana.push(k.c);
+  else state.learnedKana.splice(idx, 1);
+  saveState(); renderStats();
+  // Update grid card in background
+  document.querySelectorAll('.kana-card').forEach(card => {
+    if(card.querySelector('.kana-char')?.textContent === k.c) {
+      card.classList.toggle('learned', state.learnedKana.includes(k.c));
+    }
+  });
+  // Update progress bar
+  const tc = document.querySelector('#tab-kana');
+  if(tc) {
+    const allCards = tc.querySelectorAll('.kana-card:not([style*="opacity:0"])');
+    const learnedCards = tc.querySelectorAll('.kana-card.learned');
+    const pct = allCards.length ? Math.round(learnedCards.length/allCards.length*100) : 0;
+    const pb = tc.querySelector('#kana-pbar');
+    const pt = tc.querySelectorAll('.kana-progress-text span');
+    if(pb) pb.style.width = pct+'%';
+    if(pt[0]) pt[0].textContent = learnedCards.length + ' / ' + allCards.length + ' gelernt';
+    if(pt[1]) pt[1].textContent = pct+'%';
+  }
+  renderKanaModal();
+}
+
+function renderKanaModal() {
+  const list = kanaModal.list;
+  const k = list[kanaModal.idx];
+  if(!k) return;
+
+  const isLearned = state.learnedKana.includes(k.c);
+  const hint = KANA_ROW_HINTS[k.r] || '';
+
+  document.getElementById('kana-modal-counter').textContent = `${kanaModal.idx + 1} / ${list.length}`;
+  document.getElementById('kana-modal-char').textContent = k.c;
+  document.getElementById('kana-modal-rom').textContent = k.r;
+  document.getElementById('kana-modal-hint').textContent = hint;
+
+  // Badges
+  const badges = document.getElementById('kana-modal-badges');
+  badges.innerHTML = `
+    <span class="kana-modal-badge badge-row">${hint}</span>
+    <span class="kana-modal-badge ${isLearned ? 'badge-learned' : 'badge-unlearned'}">${isLearned ? '✓ Gelernt' : '○ Noch offen'}</span>
+  `;
+
+  // Learn button
+  const btn = document.getElementById('kana-modal-learn-btn');
+  btn.textContent = isLearned ? '↩ Als ungelernt markieren' : '✓ Als gelernt markieren';
+  btn.className = 'kana-modal-learn-btn ' + (isLearned ? 'mark-unlearned' : 'mark-learned');
+
+  // Nav buttons
+  document.getElementById('kana-nav-prev').disabled = kanaModal.idx === 0;
+  document.getElementById('kana-nav-next').disabled = kanaModal.idx === list.length - 1;
+
+  // Dots
+  const dotsEl = document.getElementById('kana-nav-dots');
+  dotsEl.innerHTML = list.map((item, i) => {
+    const doneDot = state.learnedKana.includes(item.c);
+    return `<button class="kana-nav-dot ${i === kanaModal.idx ? 'active' : ''} ${doneDot && i !== kanaModal.idx ? 'done' : ''}"
+      onclick="kanaModalNav(${i - kanaModal.idx})" title="${item.c} · ${item.r}"></button>`;
+  }).join('');
 }
 
 function toggleKana(char, card) {
